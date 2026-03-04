@@ -1,76 +1,78 @@
 # Filament Gemini Search
 
-Un plugin Filament v4/v5 qui intègre l'API Google Gemini avec **Google Search Grounding** pour effectuer des recherches web en temps réel directement depuis votre panneau d'administration.
+A Filament v4/v5 plugin that integrates **Google Gemini API** with **Google Search Grounding** to perform real-time web searches directly from your admin panel.
 
-Gemini ne se contente pas de générer du texte — il **effectue de vraies recherches Google**, analyse les résultats, et vous retourne une réponse structurée avec les **sources vérifiables**.
+Gemini doesn't just generate text — it **performs real Google searches**, analyzes the results, and returns structured responses with **verifiable sources**.
 
-## Fonctionnalités
+## Features
 
-- Recherche web en temps réel via Gemini + Google Search Grounding
-- Page de recherche dédiée avec affichage Markdown des résultats
-- Widget compact pour le dashboard
-- Sources et liens cliquables vers les sites trouvés
-- Historique des recherches en base de données
-- Compatible Filament v4 et v5
+- Real-time web search via Gemini + Google Search Grounding
+- Dedicated search page with Markdown result rendering
+- Compact dashboard widget
+- Clickable sources and links to found websites
+- Search history stored in database
+- Multi-language support (EN/FR)
+- Full dark mode support
+- Compatible with Filament v4 and v5
 
 ---
 
-## Obtenir une clé API Gemini
+## Getting a Gemini API Key
 
-### Étape 1 : Créer un compte Google AI Studio
+### Step 1: Create a Google AI Studio Account
 
-1. Rendez-vous sur **[Google AI Studio](https://aistudio.google.com/)**
-2. Connectez-vous avec votre compte Google
+1. Go to **[Google AI Studio](https://aistudio.google.com/)**
+2. Sign in with your Google account
 
-### Étape 2 : Générer une clé API
+### Step 2: Generate an API Key
 
-1. Cliquez sur **"Get API Key"** dans le menu de gauche
-2. Cliquez sur **"Create API Key"**
-3. Sélectionnez un projet Google Cloud (ou créez-en un)
-4. Copiez la clé générée (format : `AIzaSy...`)
+1. Click **"Get API Key"** in the left menu
+2. Click **"Create API Key"**
+3. Select a Google Cloud project (or create one)
+4. Copy the generated key (format: `AIzaSy...`)
 
-### Étape 3 : Plan gratuit vs payant
+### Step 3: Free vs Paid Plan
 
-| | **Plan Gratuit** | **Plan Payant (Pay-as-you-go)** |
+| | **Free Plan** | **Paid Plan (Pay-as-you-go)** |
 |---|---|---|
-| **Requêtes/minute** | 15 | 2 000 |
-| **Requêtes/jour** | 1 500 | Illimité |
-| **Grounding Search** | ✅ Inclus | ✅ Inclus |
-| **Coût** | 0 $ | ~0.001-0.01 $ / requête |
+| **Requests/minute** | 15 | 2,000 |
+| **Requests/day** | 1,500 | Unlimited |
+| **Grounding Search** | Included | Included |
+| **Cost** | $0 | ~$0.001-0.01 / request |
 
-> **Conseil** : Le plan gratuit est largement suffisant pour du développement et un usage modéré en production. Pour activer la facturation, rendez-vous sur [Google Cloud Console > Billing](https://console.cloud.google.com/billing).
+> **Tip**: The free plan is more than enough for development and moderate production use. To enable billing, visit [Google Cloud Console > Billing](https://console.cloud.google.com/billing).
 
-### Étape 4 : Activer l'API
+### Step 4: Enable the API
 
-Si vous rencontrez des erreurs 403, activez l'API manuellement :
+If you encounter 403 errors, enable the API manually:
 
-1. Allez sur [Google Cloud Console > APIs](https://console.cloud.google.com/apis/library)
-2. Cherchez **"Generative Language API"**
-3. Cliquez sur **"Activer"**
+1. Go to [Google Cloud Console > APIs](https://console.cloud.google.com/apis/library)
+2. Search for **"Generative Language API"**
+3. Click **"Enable"**
 
 ---
 
 ## Installation
 
 ```bash
-composer require self-project/filament-gemini-search
+composer require akpagni5547/filament-gemini-search
 ```
 
-Ajoutez votre clé dans `.env` :
+Add your key to `.env`:
 
 ```env
-GEMINI_API_KEY=AIzaSy...votre-cle-ici
+GEMINI_API_KEY=AIzaSy...your-key-here
 GEMINI_MODEL=gemini-2.5-flash
 ```
 
-Publiez la configuration et lancez les migrations :
+Publish the configuration and run migrations:
 
 ```bash
 php artisan vendor:publish --tag=gemini-search-config
 php artisan migrate
 ```
 
-Enregistrez le plugin dans votre `PanelProvider` :
+Register the plugin in your `PanelProvider`:
 
 ```php
 use SelfProject\FilamentGeminiSearch\FilamentGeminiSearchPlugin;
@@ -94,159 +96,143 @@ return [
     'api_key' => env('GEMINI_API_KEY'),
     'model' => env('GEMINI_MODEL', 'gemini-2.5-flash'),
     'grounding' => [
-        'enabled' => true, // Active Google Search Grounding
+        'enabled' => true, // Enable Google Search Grounding
     ],
     'history' => [
-        'enabled' => true,  // Sauvegarde les recherches en DB
+        'enabled' => true,  // Save searches in DB
         'max_records' => 500,
     ],
     'navigation' => [
-        'group' => null,         // Groupe de navigation Filament
+        'group' => null,         // Filament navigation group
         'icon' => 'heroicon-o-magnifying-glass',
         'sort' => 100,
     ],
 ];
 ```
 
-### Désactiver la page ou le widget
+### Disable page or widget
 
 ```php
 FilamentGeminiSearchPlugin::make()
-    ->disablePage()    // Garde uniquement le widget
-    ->disableWidget()  // Garde uniquement la page
+    ->disablePage()    // Keep only the widget
+    ->disableWidget()  // Keep only the page
 ```
 
 ---
 
-## Cas d'utilisation
+## Use Cases
 
-### 1. Veille tarifaire / Comparaison de prix
+### 1. Price Monitoring / Comparison
 
-Recherchez les prix d'un produit sur différents sites e-commerce. Gemini effectue la recherche Google et retourne les prix avec les liens vers les boutiques.
-
-```
-"Prix climatiseur Nasco 2CV 18000 BTU à Abidjan"
-```
-
-**Résultat** : Liste des prix en FCFA avec liens vers jumia.ci, eas.ci, jachete.ci, etc.
-
-### 2. Veille concurrentielle
-
-Surveillez ce que font vos concurrents, leurs offres, leurs nouveautés.
+Search for product prices across different e-commerce sites. Gemini performs the Google search and returns prices with links to stores.
 
 ```
-"Dernières offres et promotions Orange CI forfait internet mars 2026"
+"iPhone 16 Pro price comparison 2026"
 ```
 
-**Résultat** : Résumé des offres actuelles avec sources officielles.
+**Result**: Price list with links to Amazon, Best Buy, etc.
 
-### 3. Recherche de fournisseurs
+### 2. Competitive Intelligence
 
-Trouvez des fournisseurs pour vos besoins métier directement depuis votre back-office.
-
-```
-"Grossistes fournitures de bureau Abidjan avec livraison"
-```
-
-**Résultat** : Liste de fournisseurs avec contacts et sites web.
-
-### 4. Support client enrichi
-
-Vos agents support peuvent rechercher des informations produit en temps réel pour répondre aux clients.
+Monitor what your competitors are doing, their offers, and latest news.
 
 ```
-"Caractéristiques techniques Samsung Galaxy A15 fiche technique complète"
+"Latest AWS pricing changes cloud computing March 2026"
 ```
 
-**Résultat** : Spécifications détaillées avec sources fiables.
+**Result**: Summary of current offers with official sources.
 
-### 5. Recherche réglementaire / juridique
+### 3. Supplier Research
 
-Trouvez des informations sur les réglementations en vigueur.
-
-```
-"Procédure création SARL Côte d'Ivoire 2026 documents requis"
-```
-
-**Résultat** : Étapes et documents nécessaires avec liens officiels.
-
-### 6. Veille technologique
-
-Restez informé des dernières tendances tech depuis votre dashboard admin.
+Find suppliers for your business needs directly from your back-office.
 
 ```
-"Nouveautés Laravel 12 principales fonctionnalités"
+"Best wholesale office supplies distributors with delivery"
 ```
 
-**Résultat** : Résumé des nouveautés avec liens vers la doc officielle.
+**Result**: List of suppliers with contacts and websites.
 
-### 7. Recherche de talents / Recrutement
+### 4. Enhanced Customer Support
 
-Recherchez des profils ou des plateformes de recrutement.
-
-```
-"Plateformes recrutement développeurs PHP Côte d'Ivoire"
-```
-
-### 8. Analyse de marché
-
-Obtenez des données de marché actualisées pour vos décisions business.
+Your support agents can search for product information in real-time to assist customers.
 
 ```
-"Taille du marché e-commerce Afrique de l'Ouest 2025 2026 statistiques"
+"Samsung Galaxy A15 full technical specifications"
 ```
+
+**Result**: Detailed specifications with reliable sources.
+
+### 5. Regulatory / Legal Research
+
+Find information about current regulations.
+
+```
+"GDPR compliance requirements for SaaS companies 2026"
+```
+
+**Result**: Steps and required documents with official links.
+
+### 6. Tech Watch
+
+Stay informed about the latest tech trends from your admin dashboard.
+
+```
+"Laravel 12 new features and improvements"
+```
+
+**Result**: Summary of new features with links to official docs.
 
 ---
 
-## Comment ça marche (sous le capot)
+## How It Works (Under the Hood)
 
 ```
-┌──────────────┐     ┌──────────────┐     ┌──────────────┐
-│  Filament UI │────>│  Gemini API  │────>│ Google Search│
-│  (votre app) │     │  (LLM)       │     │ (grounding)  │
-└──────────────┘     └──────┬───────┘     └──────────────┘
-                            │
-                    ┌───────▼───────┐
-                    │ Réponse avec  │
-                    │ • Texte IA    │
-                    │ • Sources web │
-                    │ • Requêtes    │
-                    └───────────────┘
++--------------+     +--------------+     +--------------+
+| Filament UI  |---->| Gemini API   |---->| Google Search|
+| (your app)   |     | (LLM)        |     | (grounding)  |
++--------------+     +------+-------+     +--------------+
+                            |
+                    +-------v-------+
+                    | Response with |
+                    | - AI text     |
+                    | - Web sources |
+                    | - Queries     |
+                    +---------------+
 ```
 
-La clé c'est le paramètre `tools: [{ google_search: {} }]` dans l'appel API. Cela dit à Gemini : "Avant de répondre, fais une vraie recherche Google et base ta réponse sur les résultats."
+The key is the `tools: [{ google_search: {} }]` parameter in the API call. This tells Gemini: "Before answering, perform a real Google search and base your response on the results."
 
 ---
 
-## Modèles Gemini disponibles
+## Available Gemini Models
 
-| Modèle | Vitesse | Qualité | Grounding |
-|--------|---------|---------|-----------|
-| `gemini-2.5-flash` | Rapide | Très bon | ✅ |
-| `gemini-2.5-pro` | Plus lent | Excellent | ✅ |
-| `gemini-2.0-flash` | Très rapide | Bon | ✅ |
-| `gemini-2.0-flash-lite` | Ultra rapide | Correct | ✅ |
+| Model | Speed | Quality | Grounding |
+|-------|-------|---------|-----------|
+| `gemini-2.5-flash` | Fast | Very good | Yes |
+| `gemini-2.5-pro` | Slower | Excellent | Yes |
+| `gemini-2.0-flash` | Very fast | Good | Yes |
+| `gemini-2.0-flash-lite` | Ultra fast | Decent | Yes |
 
-> **Recommandé** : `gemini-2.5-flash` — meilleur rapport vitesse/qualité.
+> **Recommended**: `gemini-2.5-flash` — best speed/quality ratio.
 
 ---
 
-## Tests
+## Testing
 
-### Test rapide (sans Laravel)
+### Quick Test (without Laravel)
 
 ```bash
 curl "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent" \
-  -H "x-goog-api-key: VOTRE_CLE" \
+  -H "x-goog-api-key: YOUR_KEY" \
   -H "Content-Type: application/json" \
   -X POST \
   -d '{
-    "contents": [{"parts": [{"text": "Prix iPhone 16 Abidjan"}]}],
+    "contents": [{"parts": [{"text": "Latest Laravel features"}]}],
     "tools": [{"google_search": {}}]
   }'
 ```
 
-### Test dans Laravel (Tinker)
+### Test in Laravel (Tinker)
 
 ```bash
 php artisan tinker
@@ -254,14 +240,99 @@ php artisan tinker
 
 ```php
 $service = app(\SelfProject\FilamentGeminiSearch\Services\GeminiSearchService::class);
-$result = $service->search('Prix climatiseur Nasco 2CV Abidjan');
+$result = $service->search('Latest Laravel 12 features');
 
-echo $result->text;        // Réponse formatée
-dump($result->sources);    // Sources avec URLs
-dump($result->searchQueries); // Requêtes Google effectuées
+echo $result->text;           // Formatted response
+dump($result->sources);       // Sources with URLs
+dump($result->searchQueries); // Google queries performed
 ```
 
 ---
+
+## License
+
+MIT
+
+---
+
+---
+
+# Documentation en Francais
+
+Un plugin Filament v4/v5 qui integre l'API Google Gemini avec **Google Search Grounding** pour effectuer des recherches web en temps reel directement depuis votre panneau d'administration.
+
+## Fonctionnalites
+
+- Recherche web en temps reel via Gemini + Google Search Grounding
+- Page de recherche dediee avec affichage Markdown des resultats
+- Widget compact pour le dashboard
+- Sources et liens cliquables vers les sites trouves
+- Historique des recherches en base de donnees
+- Support multi-langue (FR/EN) et dark mode
+- Compatible Filament v4 et v5
+
+## Installation
+
+```bash
+composer require akpagni5547/filament-gemini-search
+```
+
+Ajoutez votre cle dans `.env` :
+
+```env
+GEMINI_API_KEY=AIzaSy...votre-cle-ici
+GEMINI_MODEL=gemini-2.5-flash
+```
+
+Publiez la configuration et lancez les migrations :
+
+```bash
+php artisan vendor:publish --tag=gemini-search-config
+php artisan migrate
+```
+
+Enregistrez le plugin dans votre `PanelProvider` :
+
+```php
+use SelfProject\FilamentGeminiSearch\FilamentGeminiSearchPlugin;
+
+public function panel(Panel $panel): Panel
+{
+    return $panel
+        ->plugin(FilamentGeminiSearchPlugin::make());
+}
+```
+
+## Configuration
+
+```php
+// config/gemini-search.php
+
+return [
+    'api_key' => env('GEMINI_API_KEY'),
+    'model' => env('GEMINI_MODEL', 'gemini-2.5-flash'),
+    'grounding' => [
+        'enabled' => true, // Active Google Search Grounding
+    ],
+    'history' => [
+        'enabled' => true,  // Sauvegarde les recherches en DB
+        'max_records' => 500,
+    ],
+    'navigation' => [
+        'group' => null,
+        'icon' => 'heroicon-o-magnifying-glass',
+        'sort' => 100,
+    ],
+];
+```
+
+### Desactiver la page ou le widget
+
+```php
+FilamentGeminiSearchPlugin::make()
+    ->disablePage()    // Garde uniquement le widget
+    ->disableWidget()  // Garde uniquement la page
+```
 
 ## Licence
 
