@@ -1,5 +1,5 @@
 {
-    "name": "self-project/filament-gemini-search",
+    "name": "akpagni5547/filament-gemini-search",
     "description": "Filament plugin for Gemini API search with Google Search Grounding",
     "keywords": ["filament", "gemini", "google", "search", "grounding", "laravel"],
     "type": "library",
