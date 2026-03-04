@@ -1,0 +1,26 @@
+<?php
+
+return [
+    'title' => 'Gemini Search',
+    'search' => 'Rechercher',
+    'searching' => '...',
+    'history' => 'Historique',
+    'history_title' => 'Historique des recherches',
+    'history_recent' => 'Recherches récentes',
+    'history_empty' => 'Aucun historique',
+    'history_close' => 'Fermer',
+    'result' => 'Résultat',
+    'result_gemini' => 'Résultat Gemini',
+    'clear' => 'Effacer',
+    'sources' => 'Sources',
+    'source_count' => ':count source|:count sources',
+    'search_queries' => 'Recherches Google effectuées',
+    'loading_title' => 'Gemini recherche sur Google',
+    'loading_subtitle' => 'Analyse des résultats en cours...',
+    'loading_widget' => 'Gemini interroge Google...',
+    'empty_title' => 'Posez une question ou recherchez des informations. Gemini effectuera une recherche Google en temps réel.',
+    'placeholder' => 'Rechercher n\'importe quoi — prix, produits, informations...',
+    'placeholder_widget' => 'Ex: Prix climatiseur Nasco 2CV Abidjan...',
+    'error_title' => 'Erreur de recherche',
+    'error_title_short' => 'Erreur',
+];

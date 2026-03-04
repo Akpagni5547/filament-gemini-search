@@ -1,0 +1,26 @@
+<?php
+
+return [
+    'title' => 'Gemini Search',
+    'search' => 'Search',
+    'searching' => '...',
+    'history' => 'History',
+    'history_title' => 'Search history',
+    'history_recent' => 'Recent searches',
+    'history_empty' => 'No history',
+    'history_close' => 'Close',
+    'result' => 'Result',
+    'result_gemini' => 'Gemini Result',
+    'clear' => 'Clear',
+    'sources' => 'Sources',
+    'source_count' => ':count source|:count sources',
+    'search_queries' => 'Google searches performed',
+    'loading_title' => 'Gemini is searching Google',
+    'loading_subtitle' => 'Analyzing results...',
+    'loading_widget' => 'Gemini is querying Google...',
+    'empty_title' => 'Ask a question or search for information. Gemini will perform a real-time Google search.',
+    'placeholder' => 'Search anything — prices, products, information...',
+    'placeholder_widget' => 'E.g.: Nasco 2HP AC price...',
+    'error_title' => 'Search error',
+    'error_title_short' => 'Error',
+];
